@@ -32,7 +32,7 @@ var conf = config.New(viper.New())
 
 // Handler
 func handler(c echo.Context) error {
-	service := xservice.New(conf.XClient(), conf.XRequest(), c.Request().Header.Get("X-Request-ID"))
+	service := xservice.New(conf.XService(), c.Request().Header.Get("X-Request-ID"))
 	res, _ := feature.Feature(service, conf.XHandler(), trace.ID(c))
 	return c.JSON(http.StatusOK, res)
 }

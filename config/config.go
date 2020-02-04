@@ -15,10 +15,19 @@ func (c *Config) Logger() *Logger {
 	return &Logger{}
 }
 
-type Client struct{}
+type XService struct {
+	*XClient
+	*XRequest
+}
 
-func (c *Config) XClient() *Client {
-	return &Client{}
+func (c *Config) XService() *XService {
+	return &XService{}
+}
+
+type XClient struct{}
+
+func (c *Config) XClient() *XClient {
+	return &XClient{}
 }
 
 type XRequest struct{}

@@ -3,25 +3,39 @@ package xservice
 import (
 	"net/http"
 
+	"bytes"
+
+	"encoding/json"
+
 	"github.com/goyod/pbecho/config"
 )
 
-func NewClient(conf *config.Client, xRequestID string) *http.Client {
+func NewClient(conf *config.XClient, xRequestID string) *http.Client {
 	return &http.Client{}
 }
 
-func NewRequest(conf *config.XRequest, xRequestID string) *http.Request {
-	return &http.Request{}
-}
-
-func New(c *config.Client, r *config.XRequest, xRequestID string) func() Response {
-	return NewService(NewClient(c, xRequestID), NewRequest(r, xRequestID))
-}
-
+type Request struct{}
 type Response struct{}
 
-func NewService(*http.Client, *http.Request) func() Response {
-	return func() Response {
-		return Response{}
+func New(s *config.XService, xRequestID string) func(Request) Response {
+	client := NewClient(s.XClient, xRequestID)
+	return func(xreq Request) Response {
+
+		buf := new(bytes.Buffer)
+		enc := json.NewEncoder(buf)
+		enc.Encode(&xreq)
+		req, _ := http.NewRequest("", "", buf)
+
+		res, err := client.Do(req)
+		if err != nil {
+			return Response{}
+		}
+		defer res.Body.Close()
+
+		var resp Response
+		dec := json.NewDecoder(res.Body)
+		dec.Decode(&resp)
+
+		return resp
 	}
 }
