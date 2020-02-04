@@ -1,7 +1,9 @@
 # How to deal with dependencies in Echo
 
-Handler + log + http.Client + database + config
-http.Client + config
-http.Request + X-Request-ID + config
-database + log + config
-log + X-Request-ID
+~~~
+Handler use log, http.Client, database, config
+http.Client use config
+http.Request use X-Request-ID, config
+database use log, config
+log use X-Request-ID
+~~~
